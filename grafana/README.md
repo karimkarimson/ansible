@@ -1,9 +1,10 @@
 # Remote Grafana Install & SetUp
 
 ## How to use:
+- access this directory
+    `cd #{path to the grafana directory}`
 - deploy infrastructre with terraform:
     ```bash
-    cd #{path to this directory}
     terraform init
     terraform plan --out tfplan.out
     terraform apply tfplan.out

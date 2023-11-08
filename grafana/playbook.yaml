@@ -26,7 +26,7 @@
         state: latest 
       become: yes
     - name: get Grafana Config ini
-      ansible.builtin.shell: curl https://raw.githubusercontent.com/martindubb/random-stuff/main/grafana/grafana.ini > /etc/grafana/grafana.ini
+      ansible.builtin.shell: curl https://raw.githubusercontent.com/karimkarimson/ansible/main/grafana/grafana.ini > /etc/grafana/grafana.ini
       become: yes
     - name: Create credential folder in grafana
       ansible.builtin.file:
@@ -35,7 +35,7 @@
       become: yes
     - name: Copy credentials to remote maschine
       ansible.builtin.copy:
-        src: /mnt/c/Users/karim/Desktop/Techstarter/Terraform/grafana/credentials
+        src: ./credentials
         dest: /usr/share/grafana/.aws/
       become: yes
     - name: start Grafana Service
