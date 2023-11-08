@@ -11,3 +11,5 @@ This is my Ansible Playground.
 
 ### [Webserver](./ansible-webserver/)
 - This sets up a basic webserver with Nginx and a minimalistic HTML page
+### [Grafana Remote Install](./grafana/)
+- Sets up a server, then installs and configures Grafana on it

@@ -1,0 +1,45 @@
+- name: Install Grafana on Ubuntu 
+  hosts: ubuntu
+  gather_facts: False
+  tasks:
+    - name: Some magic
+      ansible.builtin.shell: apt-get install -y apt-transport-https software-properties-common wget
+      become: yes
+    - name: import gpg
+      ansible.builtin.shell: sudo mkdir -p /etc/apt/keyrings/
+      become: yes
+    - name: unpack key
+      ansible.builtin.shell: wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+      become: yes
+    - name: add Grafana Repo to Apt-Sources
+      ansible.builtin.shell: echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" >> /etc/apt/sources.list.d/grafana.list
+      become: yes
+    - name: update all packages
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      become: yes
+    - name: upgrade all packages
+      apt: upgrade=dist force_apt_get=yes
+      become: yes
+    - name: Install Grafana
+      ansible.builtin.apt:
+        name: grafana
+        state: latest 
+      become: yes
+    - name: get Grafana Config ini
+      ansible.builtin.shell: curl https://raw.githubusercontent.com/martindubb/random-stuff/main/grafana/grafana.ini > /etc/grafana/grafana.ini
+      become: yes
+    - name: Create credential folder in grafana
+      ansible.builtin.file:
+        path: /usr/share/grafana/.aws/
+        state: directory
+      become: yes
+    - name: Copy credentials to remote maschine
+      ansible.builtin.copy:
+        src: /mnt/c/Users/karim/Desktop/Techstarter/Terraform/grafana/credentials
+        dest: /usr/share/grafana/.aws/
+      become: yes
+    - name: start Grafana Service
+      ansible.builtin.systemd: 
+        name: grafana-server
+        state: started
+      become: yes
