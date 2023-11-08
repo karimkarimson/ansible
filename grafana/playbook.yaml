@@ -5,15 +5,14 @@
     - name: Some magic
       ansible.builtin.shell: apt-get install -y apt-transport-https software-properties-common wget
       become: yes
-    - name: import gpg
-      ansible.builtin.shell: sudo mkdir -p /etc/apt/keyrings/
-      become: yes
-    - name: unpack key
-      ansible.builtin.shell: wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-      become: yes
-    - name: add Grafana Repo to Apt-Sources
-      ansible.builtin.shell: echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" >> /etc/apt/sources.list.d/grafana.list
-      become: yes
+    - name: add grafana gpg key
+      ansible.builtin.apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+    - name: add grafana apt repo
+      ansible.builtin.apt_repository:
+        repo: deb https://packages.grafana.com/oss/deb stable main
+        state: present
     - name: update all packages
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
       become: yes
