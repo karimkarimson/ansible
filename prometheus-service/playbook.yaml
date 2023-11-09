@@ -1,0 +1,163 @@
+- name: Install Prometheus, Node_Exporter and Grafana on Ubuntu 
+  hosts: prometheus
+  gather_facts: False
+  tasks:
+    - name: Create Prometheus Folder
+      ansible.builtin.file:
+        path: /home/ubuntu/prometheus
+        state: directory
+    - name: Get Prometheus packages
+      ansible.builtin.get_url:
+        url: https://github.com/prometheus/prometheus/releases/download/v2.47.2/prometheus-2.47.2.linux-amd64.tar.gz
+        dest: /home/ubuntu/prometheus/
+    - name: Unpack Prometheus packages
+      ansible.builtin.shell: tar -xvf /home/ubuntu/prometheus/prometheus-2.47.2.linux-amd64.tar.gz
+    
+    - name: CREATING PROMETHEUS SERVICE 
+      ansible.builtin.file:
+        path: /usr/local/bin/prometheus
+        state: directory
+      become: true
+    - name: Copy Prometheus packages
+      ansible.builtin.shell: cp -r /home/ubuntu/prometheus-2.47.2.linux-amd64/* /usr/local/bin/prometheus
+      become: true
+    - name: upload Prometheus Service File
+      ansible.builtin.copy:
+        src: ./prometheus.service
+        dest: /etc/systemd/system/prometheus.service
+      become: true
+    - name: start Prometheus Service
+      ansible.builtin.systemd: 
+        name: prometheus
+        state: started
+      become: true
+
+    - name: NODE EXPORTER INSTALL START 
+      ansible.builtin.file:
+        path: /home/ubuntu/node_exporter
+        owner: ubuntu
+        group: ubuntu
+        state: directory
+      become: true
+    - name: Get Node Exporter packages
+      ansible.builtin.get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        dest: /home/ubuntu/node_exporter/
+    - name: Unpack Node Exporter packages
+      ansible.builtin.shell: tar -xvf /home/ubuntu/node_exporter/node_exporter-1.6.1.linux-amd64.tar.gz
+
+    - name: CREATING NODE EXPORTER SERVICE 
+      ansible.builtin.file:
+        path: /usr/local/bin/node_exporter
+        state: directory
+      become: true
+    - name: Copy Node Exporter packages
+      ansible.builtin.shell: cp -r /home/ubuntu/node_exporter-1.6.1.linux-amd64/* /usr/local/bin/node_exporter
+      become: true
+    - name: upload Node Exporter Service File
+      ansible.builtin.copy:
+        src: ./node_exporter.service
+        dest: /etc/systemd/system/node_exporter.service
+      become: true
+    - name: start Node_Exporter Service
+      ansible.builtin.systemd: 
+        name: node_exporter
+        state: started
+      become: true
+
+    - name: GRAFANA INSTALL START
+      ansible.builtin.shell: apt-get install -y apt-transport-https software-properties-common wget 
+      become: true
+    - name: add grafana gpg key
+      ansible.builtin.apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+      become: true
+    - name: add grafana apt repo
+      ansible.builtin.apt_repository:
+        repo: deb https://packages.grafana.com/oss/deb stable main
+        state: present
+      become: true
+    - name: update all packages
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      become: true
+    - name: upgrade all packages
+      apt: upgrade=dist force_apt_get=yes
+      become: true
+    - name: Install Grafana
+      ansible.builtin.apt:
+        name: grafana
+        state: latest 
+      become: true
+    - name: start Grafana Service
+      ansible.builtin.systemd: 
+        name: grafana-server
+        state: started
+      become: true
+
+- name: Install Node_Exporter and Prometheus on Ubuntu 
+  hosts: ubuntu
+  gather_facts: False
+  tasks:
+    - name: NODE EXPORTER INSTALL START 
+      ansible.builtin.file:
+        path: /home/ubuntu/node_exporter
+        owner: ubuntu
+        group: ubuntu
+        state: directory
+      become: true
+    - name: Get Node Exporter packages
+      ansible.builtin.get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        dest: /home/ubuntu/node_exporter/
+    - name: Unpack Node Exporter packages
+      ansible.builtin.shell: tar -xvf /home/ubuntu/node_exporter/node_exporter-1.6.1.linux-amd64.tar.gz
+
+    - name: CREATING NODE EXPORTER SERVICE 
+      ansible.builtin.file:
+        path: /usr/local/bin/node_exporter
+        state: directory
+      become: true
+    - name: Copy Node Exporter packages
+      ansible.builtin.shell: cp -r /home/ubuntu/node_exporter-1.6.1.linux-amd64/* /usr/local/bin/node_exporter
+      become: true
+    - name: upload Node Exporter Service File
+      ansible.builtin.copy:
+        src: ./node_exporter.service
+        dest: /etc/systemd/system/node_exporter.service
+      become: true
+    - name: start Node_Exporter Service
+      ansible.builtin.systemd: 
+        name: node_exporter
+        state: started
+      become: true
+
+    - name: PROMETHEUS INSTALL START
+      ansible.builtin.file:
+        path: /home/ubuntu/prometheus
+        state: directory
+    - name: Get Prometheus packages
+      ansible.builtin.get_url:
+        url: https://github.com/prometheus/prometheus/releases/download/v2.47.2/prometheus-2.47.2.linux-amd64.tar.gz
+        dest: /home/ubuntu/prometheus/
+    - name: Unpack Prometheus packages
+      ansible.builtin.shell: tar -xvf /home/ubuntu/prometheus/prometheus-2.47.2.linux-amd64.tar.gz
+    
+    - name: CREATING PROMETHEUS SERVICE 
+      ansible.builtin.file:
+        path: /usr/local/bin/prometheus
+        state: directory
+      become: true
+    - name: Copy Prometheus packages
+      ansible.builtin.shell: cp -r /home/ubuntu/prometheus-2.47.2.linux-amd64/* /usr/local/bin/prometheus
+      become: true
+    - name: upload Prometheus Service File
+      ansible.builtin.copy:
+        src: ./prometheus.service
+        dest: /etc/systemd/system/prometheus.service
+      become: true
+    - name: start Prometheus Service
+      ansible.builtin.systemd: 
+        name: prometheus
+        state: started
+      become: true
