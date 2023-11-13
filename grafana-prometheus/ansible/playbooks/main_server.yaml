@@ -1,0 +1,20 @@
+---
+- name: Install Monitoring and Alerting
+  hosts: prometheus
+  roles:
+    - role: prometheus
+      vars: 
+        prometheus_dir: '/home/ubuntu/prometheus'
+        prometheus_url: 'https://github.com/prometheus/prometheus/releases/download/v2.47.2/prometheus-2.47.2.linux-amd64.tar.gz'
+        prometheus_version: 'prometheus-2.47.2.linux-amd64'
+        prometheus_bin: '/usr/local/bin/prometheus'
+
+    - role: alertmanager
+      vars:
+        alertmanager_dir: '/home/ubuntu/alertmanager'
+        alertmanager_url: 'https://github.com/prometheus/alertmanager/releases/download/v0.26.0/alertmanager-0.26.0.linux-amd64.tar.gz'
+        alertmanager_version: 'alertmanager-0.26.0.linux-amd64'
+        alertmanager_bin: '/usr/local/bin/alertmanager'
+
+    - role: grafana
+  become: true

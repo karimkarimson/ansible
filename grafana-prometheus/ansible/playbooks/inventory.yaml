@@ -1,0 +1,14 @@
+instances:
+  hosts:
+    prometheus:
+      ansible_connection: ssh
+      ansible_ssh_user: ubuntu
+      ansible_host: "{{lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/gitrepo/teaching/Monitoring/Grafana_Prometheus/terraform_ec2/ip_0')}}"
+      ansible_port: 22
+      ansible_ssh_private_key_file: /etc/ansible/ssh-october
+    node_exporter:
+      ansible_connection: ssh
+      ansible_ssh_user: ubuntu
+      ansible_host: "{{lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/gitrepo/teaching/Monitoring/Grafana_Prometheus/terraform_ec2/ip_1')}}"
+      ansible_port: 22
+      ansible_ssh_private_key_file: /etc/ansible/ssh-october

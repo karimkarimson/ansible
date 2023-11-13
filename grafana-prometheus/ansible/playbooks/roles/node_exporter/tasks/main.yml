@@ -1,0 +1,49 @@
+---
+
+- name: Update all packages
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: create directory
+  file:
+    path: '{{ node_exporter_dir }}'
+    state: directory
+
+- name: download node exporter
+  get_url:
+    url: '{{ node_exporter_url }}' 
+    dest: '{{ node_exporter_dir }}/{{ node_exporter_version }}.tar.gz'
+
+- name: unpack installation files
+  unarchive:
+    src: '{{ node_exporter_dir }}/{{ node_exporter_version }}.tar.gz'
+    dest: '{{ node_exporter_dir }}'
+    remote_src: yes
+
+- name: move files
+  copy:
+    src: '{{ node_exporter_dir }}/{{ node_exporter_version }}/'
+    dest: '{{ node_exporter_bin }}'
+    remote_src: yes
+
+- name: create service file
+  copy:
+    dest: "/etc/systemd/system/node_exporter.service"
+    content: |
+      [Unit]
+      Description=Node Exporter Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/bin/node_exporter/node_exporter
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: service always started
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: true

@@ -1,0 +1,67 @@
+---
+- name: Update all packages
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: create directory
+  file:
+    path: "{{ prometheus_dir }}"
+    state: directory
+
+- name: download prometheus
+  get_url:
+    url: "{{ prometheus_url }}"
+    dest: "{{ prometheus_dir }}/{{ prometheus_version }}.tar.gz"
+
+- name: unpack installation files
+  unarchive:
+    src: "{{ prometheus_dir }}/{{ prometheus_version }}.tar.gz"
+    dest: "{{ prometheus_dir }}"
+    remote_src: yes
+
+- name: move files
+  copy:
+    src: "{{ prometheus_dir }}/{{ prometheus_version }}/"
+    dest: "{{ prometheus_bin }}"
+    remote_src: yes
+
+- name: Copy from local prom_rules.yml
+  ansible.builtin.copy:
+    src: files/prom_rules.yaml
+    dest: "{{ prometheus_bin }}/prom_rules.yml"
+
+- name: create config file
+  template:
+    src: templates/exporter.yaml.j2
+    dest: "{{ prometheus_bin }}/exporter.yml"
+
+- name: "Read a file content"
+  shell: |
+    cat /usr/local/bin/prometheus/exporter.yml
+  register: file_content
+
+- name: "Print exporter.yml content to console"
+  debug:
+    msg: "{{ file_content.stdout }}"
+
+- name: create service file
+  copy:
+    dest: "/etc/systemd/system/prometheus.service"
+    content: |
+      [Unit]
+      Description=Prometheus Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/bin/prometheus/prometheus --config.file=/usr/local/bin/prometheus/exporter.yml
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: service always started
+  systemd:
+    name: prometheus
+    state: started
+    enabled: true

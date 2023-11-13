@@ -1,0 +1,46 @@
+---
+- ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: create alertmanager directory
+  ansible.builtin.file:
+    path: '{{ alertmanager_dir }}'
+    owner: ubuntu
+    group: ubuntu
+    state: directory
+
+- name: Download Alertmanager
+  ansible.builtin.get_url:
+    url: '{{ alertmanager_url }}'
+    dest: '{{ alertmanager_dir }}'
+
+- name: Unpack packages
+  ansible.builtin.shell: 'sudo tar -xvf {{ alertmanager_dir }}/{{ alertmanager_version }}.tar.gz'
+
+- name: move files
+  copy:
+    src: "/home/ubuntu/{{ alertmanager_version }}/"
+    dest: "{{ alertmanager_bin }}"
+    remote_src: yes
+
+- name: create service file
+  copy:
+    dest: "/etc/systemd/system/alertmanager.service"
+    content: |
+      [Unit]
+      Description=Alertmanager Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/usr/local/bin/alertmanager/alertmanager.yml
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: service always started
+  systemd:
+    name: alertmanager 
+    state: started
+    enabled: true

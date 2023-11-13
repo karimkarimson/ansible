@@ -1,0 +1,9 @@
+---
+- name: Install Stress
+  hosts: all
+  roles:
+    - role: stress
+      vars:
+        stress_cpu: 1
+        stress_timeout: 180
+  become: true

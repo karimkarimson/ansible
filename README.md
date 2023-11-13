@@ -15,3 +15,5 @@ This is my Ansible Playground.
 - Sets up a server, then installs and configures Grafana on it
 ### [Prometheus-Service](./prometheus-service/)
 - Deploys two instances and installs Prometheus and Grafana for data scraping & visualization
+### [Prometheus with Alarm](./grafana-prometheus/)
+- Sets up Monitoring for 2 Servers and Alarming
