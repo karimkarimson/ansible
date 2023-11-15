@@ -4,14 +4,18 @@ global:
 
 rule_files:
   - prom_rules.yml
+  - node_exporter.yml
 
 scrape_configs:
   - job_name: prometheus
     static_configs:
-        - targets: ["localhost:9100","{{lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/gitrepo/teaching/Monitoring/Grafana_Prometheus/terraform_ec2/private_ip_1')}}:9100"] 
+      - targets: ["localhost:9100"] 
+  - job_name: node_exporter
+    static_configs:
+      - targets: ["{{lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/gitrepo/teaching/Monitoring/Grafana_Prometheus/terraform_ec2/private_ip_1')}}:9100"]
 
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          - alertmanager:9093
+          - localhost:9093

@@ -1,0 +1,25 @@
+---
+- name: debug facts
+  hosts: loadbalancer
+  tasks: 
+  - name: Print all gathered facts
+    debug:
+      var: ansible_facts
+    register: ubuntu_facts
+  - name: save facts to file
+    ansible.builtin.copy:
+      content: "{{ ubuntu_facts }}"
+      dest: /mnt/c/Users/karim/Desktop/facts.txt
+    delegate_to: localhost
+
+- name: Konfigurieren des Load Balancers
+  hosts: loadbalancer
+  become: yes
+  roles:
+    - nginx
+
+- name: Konfigurieren der App-Server
+  hosts: app_servers
+  become: yes
+  roles:
+    - nodejs

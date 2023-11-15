@@ -23,6 +23,22 @@
     src: "/home/ubuntu/{{ alertmanager_version }}/"
     dest: "{{ alertmanager_bin }}"
     remote_src: yes
+  
+- name: create configuration file
+  template:
+    src: templates/alertmanager.yaml.j2
+    dest: "{{ alertmanager_bin }}/alertmanager.yml"
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+- name: create environment file
+  copy:
+    dest: "{{ alertmanager_bin }}/alertmanager.env"
+    content: |
+      AWS_ACCESS_KEY_ID={{ aws_access_key }}
+      AWS_SECRET_ACCESS_KEY={{ aws_secret_key }}
+      AWS_SESSION_TOKEN={{ aws_session_token }}
 
 - name: create service file
   copy:
@@ -34,13 +50,14 @@
 
       [Service]
       Type=simple
-      ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/usr/local/bin/alertmanager/alertmanager.yml
+      ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/usr/local/bin/alertmanager/alertmanager.yml EnvironmentFile=/usr/local/bin/alertmanager/alertmanager.env
 
       [Install]
       WantedBy=multi-user.target
 
+
 - name: service always started
   systemd:
     name: alertmanager 
-    state: started
+    state: restarted
     enabled: true

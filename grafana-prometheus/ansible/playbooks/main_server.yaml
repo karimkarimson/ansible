@@ -16,5 +16,14 @@
         alertmanager_version: 'alertmanager-0.26.0.linux-amd64'
         alertmanager_bin: '/usr/local/bin/alertmanager'
 
+        aws_region: 'eu-central-1'
+        aws_access_key: ""
+        aws_secret_key: ""
+        aws_session_token: ""
+        aws_role: ""
+        aws_profile: ""
+        sns_api : 'https://sns.eu-central-1.amazonaws.com'
+        sns_topic_arn: "{{lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/gitrepo/teaching/Monitoring/Grafana_Prometheus/terraform_ec2/sns_arn')}}"
+
     - role: grafana
   become: true

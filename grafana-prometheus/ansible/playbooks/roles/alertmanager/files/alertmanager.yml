@@ -122,3 +122,17 @@ receivers:
 - name: 'team-DB-pager'
   pagerduty_configs:
   - routing_key: <team-DB-key>
+
+- name: 'sns-topic-email'
+  sns_configs:
+    api_url: {{ sns_api}}
+    sigv4:
+      region: "{{ aws_region }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      profile: "{{ aws_profile }}"
+    topic_arn: {{ sns_topic_arn }}
+    subject: 'some alert'
+    message: "some message"
+    attributes:
+      someAttribute: "someValueForAttribute"

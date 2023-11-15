@@ -28,8 +28,13 @@
 
 - name: Copy from local prom_rules.yml
   ansible.builtin.copy:
-    src: files/prom_rules.yaml
+    src: files/alert_prom_rules.yaml
     dest: "{{ prometheus_bin }}/prom_rules.yml"
+
+- name: Copy from local alert_node_exporter.yml
+  ansible.builtin.copy:
+    src: files/alert_node_exporter.yml
+    dest: "{{ prometheus_bin }}/node_exporter.yml"
 
 - name: create config file
   template:

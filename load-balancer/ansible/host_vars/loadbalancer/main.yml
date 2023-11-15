@@ -1,0 +1,6 @@
+nginx:
+  config_path: /etc/nginx/
+  port: 80
+  private_ip_1: "{{ lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/Terraform/load-balancer/terraform/private_ip_1')}}"
+  private_ip_2: "{{ lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/Terraform/load-balancer/terraform/private_ip_2')}}"
+  private_ip_3: "{{ lookup('ansible.builtin.file', '/mnt/c/Users/karim/Desktop/Techstarter/Terraform/load-balancer/terraform/private_ip_3')}}"
